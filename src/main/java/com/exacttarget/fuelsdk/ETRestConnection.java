@@ -45,10 +45,14 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import org.apache.log4j.Logger;
@@ -217,6 +221,27 @@ public class ETRestConnection {
         URL url = null;
         try {
             url = new URL(endpoint + path);
+            
+        if(path.contains("{") && path.contains("}") && payload!=null){
+            JsonParser parser = new JsonParser();
+            JsonElement element = parser.parse(payload);
+            JsonObject data = element.getAsJsonObject();
+            
+            Pattern pat = Pattern.compile("(\\{(\\w+)\\})+");
+            Matcher mat = pat.matcher(path);
+            System.out.println("count="+mat.groupCount());
+            while(mat.find()){
+                //System.out.println("g1="+mat.group());
+                //System.out.println("g1="+mat.group(1));     //mathch {campaignId}
+                //System.out.println("g2="+mat.group(2));     //match campaignId
+
+                String curlyParam = mat.group(2);
+                String curlyValue = data.get(curlyParam).getAsString();
+                path = path.replace(mat.group(1), curlyValue);
+            }
+            url = new URL(endpoint + path);
+        }            
+            
         } catch (MalformedURLException ex) {
             throw new ETSdkException(endpoint + path + ": bad URL", ex);
         }
@@ -235,6 +260,8 @@ public class ETRestConnection {
             object = token[token.length-2];
         else 
             object = token[token.length-1];
+        
+
         
         HttpURLConnection connection = null;
         try {
