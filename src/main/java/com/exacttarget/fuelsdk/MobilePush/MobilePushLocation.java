@@ -20,7 +20,9 @@ import com.google.gson.annotations.Expose;
             collection = "items",
             totalCount = "count")
 public class MobilePushLocation extends ETRestObject {
-    
+    @Expose
+    @ExternalName("id")
+    private String id = null;    
     @Expose
     @ExternalName("name")
     private String name = null;
@@ -54,14 +56,22 @@ public class MobilePushLocation extends ETRestObject {
     @ExternalName("attributes")
     private LocationAttribute[] attributes;
 
+    /** 
+    * @return The Identifier of the MobilePushLocation object.
+    */ 
     @Override
     public String getId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return id;
     }
 
+    /** 
+    * @param id     The Identifier of the MobilePushLocation object.
+    */    
     @Override
     public void setId(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.id = id;
     }
 
     /**
