@@ -248,39 +248,56 @@ public abstract class ETRestObject extends ETApiObject {
 
         Gson gson = client.getGson();
         JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObject = jsonParser.parse(r.getResponsePayload()).getAsJsonObject();
+        JsonElement elem = jsonParser.parse(r.getResponsePayload());
+//        JsonObject jsonObject = null;
+//        if(elem.isJsonObject())
+//            jsonObject = elem.getAsJsonObject();
+        //JsonObject jsonObject = jsonParser.parse(r.getResponsePayload()).getAsJsonObject();
 
-        if (jsonObject.get("page") != null) {
-            response.setPage(jsonObject.get("page").getAsInt());
-            logger.trace("page = " + response.getPage());
-            response.setPageSize(jsonObject.get("pageSize").getAsInt());
-            logger.trace("pageSize = " + response.getPageSize());
-            response.setTotalCount(jsonObject.get(totalCount).getAsInt());
-            logger.trace("totalCount = " + response.getTotalCount());
+        if(elem.isJsonObject()) {
+            JsonObject jsonObject = elem.getAsJsonObject();
+            if (jsonObject.get("page") != null) {
+                response.setPage(jsonObject.get("page").getAsInt());
+                logger.trace("page = " + response.getPage());
+                response.setPageSize(jsonObject.get("pageSize").getAsInt());
+                logger.trace("pageSize = " + response.getPageSize());
+                response.setTotalCount(jsonObject.get(totalCount).getAsInt());
+                logger.trace("totalCount = " + response.getTotalCount());
 
-            if (response.getPage() * response.getPageSize() < response.getTotalCount()) {
-                response.setMoreResults(true);
+                if (response.getPage() * response.getPageSize() < response.getTotalCount()) {
+                    response.setMoreResults(true);
+                }
+
+                JsonArray elements = jsonObject.get(collection).getAsJsonArray();
+
+                for (JsonElement element : elements) {
+                    // XXX duplicate code A
+                    T object = gson.fromJson(element, type);
+                    object.setClient(client); // XXX
+                    ETResult<T> result = new ETResult<T>();
+                    result.setObject(object);
+                    response.addResult(result);
+                }
+            } else {
+                // XXX duplicate code A
+                T object = gson.fromJson(jsonObject, type);
+                object.setClient(client); // XXX
+                ETResult<T> result = new ETResult<T>();
+                result.setObject(object);
+                response.addResult(result);
             }
-
-            JsonArray elements = jsonObject.get(collection).getAsJsonArray();
-
-            for (JsonElement element : elements) {
+        }
+        else if(elem.isJsonArray()){
+            JsonArray jsonArray = elem.getAsJsonArray();
+            for (JsonElement element : jsonArray) {
                 // XXX duplicate code A
                 T object = gson.fromJson(element, type);
                 object.setClient(client); // XXX
                 ETResult<T> result = new ETResult<T>();
                 result.setObject(object);
                 response.addResult(result);
-            }
-        } else {
-            // XXX duplicate code A
-            T object = gson.fromJson(jsonObject, type);
-            object.setClient(client); // XXX
-            ETResult<T> result = new ETResult<T>();
-            result.setObject(object);
-            response.addResult(result);
-        }
-
+            }            
+        }        
         return response;
     }
 
@@ -307,7 +324,8 @@ public abstract class ETRestObject extends ETApiObject {
                                                                 List<T> objects)
         throws ETSdkException
     {
-        return createUpdateDelete(client, PATCH, objects);
+//        return createUpdateDelete(client, PATCH, objects);
+        return createUpdateDelete(client, PUT, objects);        //changed from PATCH to PUT
     }
 
     /**
@@ -378,6 +396,9 @@ public abstract class ETRestObject extends ETApiObject {
               case PATCH:
                 logger.trace("PATCH " + path + "/" + object.getId());
                 break;
+              case PUT:
+                logger.trace("PUT " + path + "/" + object.getId());
+                break;
               case DELETE:
                 logger.trace("DELETE " + path + "/" + object.getId());
                 break;
@@ -407,6 +428,9 @@ public abstract class ETRestObject extends ETApiObject {
               case PATCH:
                 r = connection.patch(path + "/" + object.getId(), requestPayload);
                 break;
+              case PUT:
+                r = connection.put(path + "/" + object.getId(), requestPayload);
+                break;
               case DELETE:
                 r = connection.delete(path + "/" + object.getId());
                 break;
@@ -423,7 +447,7 @@ public abstract class ETRestObject extends ETApiObject {
             }
             result.setResponseCode(r.getResponseCode().toString());
             result.setResponseMessage(r.getResponseMessage());
-            if (method != DELETE) {
+            if (method != DELETE && !r.getResponsePayload().equals("")) {
                 // no response payload for deletes
                 String responsePayload = r.getResponsePayload();
                 JsonParser jsonParser = new JsonParser();
