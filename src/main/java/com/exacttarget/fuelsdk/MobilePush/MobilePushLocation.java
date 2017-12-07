@@ -55,6 +55,14 @@ public class MobilePushLocation extends ETRestObject {
     @Expose
     @ExternalName("attributes")
     private LocationAttribute[] attributes;
+    
+    
+    public MobilePushLocation getSpecificLocation()
+    {
+        RestObject annotations = this.getClass().getAnnotation(RestObject.class);
+        //annotations.
+        return null;
+    }
 
     /** 
     * @return The Identifier of the MobilePushLocation object.
