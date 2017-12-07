@@ -14,7 +14,6 @@ import com.google.gson.annotations.Expose;
  * 
  * MobilePushLocation class represents the mobile push location object
  */
-
 @RestObject(path = "/push/v1/location",
             primaryKey = "id",
             collection = "items",
@@ -55,14 +54,6 @@ public class MobilePushLocation extends ETRestObject {
     @Expose
     @ExternalName("attributes")
     private LocationAttribute[] attributes;
-    
-    
-    public MobilePushLocation getSpecificLocation()
-    {
-        RestObject annotations = this.getClass().getAnnotation(RestObject.class);
-        //annotations.
-        return null;
-    }
 
     /** 
     * @return The Identifier of the MobilePushLocation object.
@@ -222,6 +213,9 @@ public class MobilePushLocation extends ETRestObject {
         this.attributes = attributes;
     }
     
+    /**
+     * Enumeration for Push message location type
+     */
     public enum PushMessageLocationType
     {
         GEOFENCE(1),
