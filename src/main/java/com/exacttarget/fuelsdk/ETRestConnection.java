@@ -222,7 +222,7 @@ public class ETRestConnection {
         try {
             url = new URL(endpoint + path);
             
-        if(path.contains("{") && path.contains("}") && payload!=null){
+        if(payload!=null && path.contains("{") && path.contains("}")){
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(payload);
             JsonObject data = element.getAsJsonObject();
