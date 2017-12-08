@@ -33,8 +33,9 @@ public class ETCampaignAssetTest {
     public void getAllCampaign() throws ETSdkException
     {
             ETResponse<ETCampaignAsset> response = client.retrieve(ETCampaignAsset.class);
-            
+            System.out.println("resp="+response.toString());
             ETResult<ETCampaignAsset> result = response.getResult();
+            System.out.println("res="+result.toString());
             assertNotNull(result.getObject());
     }    
     
@@ -50,7 +51,7 @@ public class ETCampaignAssetTest {
             etc.setDescription(desc);
             etc.setCode(unique);
             ETResponse<ETCampaign> resp = client.create(etc);
-            //System.out.println("resp="+ response.toString());
+            System.out.println("resp="+ resp.toString());
             String campid = resp.getObject().getId();
     
             etca = new ETCampaignAsset();
@@ -59,7 +60,7 @@ public class ETCampaignAssetTest {
             etca.setType("Email");
 
             ETResponse<ETCampaignAsset> response = client.create(etca);
-
+            System.out.println("res="+response.toString());
             ETResult<ETCampaignAsset> result = response.getResult();
             assertNotNull(result.getObject());
     }    

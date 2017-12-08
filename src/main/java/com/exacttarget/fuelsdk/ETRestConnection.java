@@ -179,6 +179,32 @@ public class ETRestConnection {
     }
 
     /**
+     * @param   path    The path to PUT or update
+     * @return  The Response object
+     */
+    public Response put(String path, String payload)
+        throws ETSdkException
+    {
+        HttpURLConnection connection = null;
+        try {
+            Response response = new Response();
+            connection = sendRequest(path, Method.PUT, payload);
+            String json = receiveResponse(connection);
+            response.setRequestId(connection.getHeaderField("X-Mashery-Message-ID"));
+            response.setResponseCode(connection.getResponseCode());
+            response.setResponseMessage(connection.getResponseMessage());
+            response.setResponsePayload(json);
+            return response;
+        } catch (IOException ex) {
+            throw new ETSdkException(ex);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }    
+
+    /**
      * @param   path    The path to DELETE
      * @return  The Response object
      */
@@ -282,6 +308,7 @@ public class ETRestConnection {
             break;
           case POST:
           case PATCH:
+          case PUT:              
           case DELETE:
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
@@ -386,7 +413,7 @@ public class ETRestConnection {
      *  types of HTTP method that can be used for CRUD operation
      */
     public enum Method {
-        GET, POST, PATCH, DELETE
+        GET, POST, PATCH, PUT, DELETE
     }
     
     /**
