@@ -11,7 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import com.exacttarget.fuelsdk.MobilePush.*;
+import com.exacttarget.fuelsdk.mobilepush.LocationAttribute;
+import com.exacttarget.fuelsdk.mobilepush.LocationCenter;
+import com.exacttarget.fuelsdk.mobilepush.MobilePushLocation;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 

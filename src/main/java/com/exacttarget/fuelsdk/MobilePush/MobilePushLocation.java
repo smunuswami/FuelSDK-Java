@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.exacttarget.fuelsdk.MobilePush;
+package com.exacttarget.fuelsdk.mobilepush;
 
 import com.exacttarget.fuelsdk.ETRestObject;
 import com.exacttarget.fuelsdk.annotations.ExternalName;

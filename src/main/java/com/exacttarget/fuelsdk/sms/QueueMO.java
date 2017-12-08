@@ -20,7 +20,10 @@ import com.google.gson.annotations.SerializedName;
  * An <code>QueueMO</code> object represents a helper class which provides interface to queue MO message
  * in the Salesforce Marketing Cloud.
  */
-
+@RestObject(path = "/sms/v1/queueMO",
+            primaryKey = "id",
+            collection = "items",
+            totalCount = "count")
 public class QueueMO extends MobileConnectObject{
     
     private String id = null;
@@ -114,7 +117,7 @@ public class QueueMO extends MobileConnectObject{
         setPath("/sms/v1/queueMO");
     }
     
-    public ETResponse QueueMOForSubscribers()
+    public ETResponse<QueueMO> QueueMOForSubscribers()
     throws ETSdkException {
         return this.create(client, this);
     }
